@@ -1,0 +1,28 @@
+﻿@model Tartan.Models.Module
+
+<div class="module">
+    <h3 class="moduleTitle editable" style="float:left; margin-top:0px;">@Model.Title</h3>
+  @if (User.IsEditor())
+  {
+  <div class="buttonSection floatleft" style="margin-top:0px; margin-left:3px;">
+    <div class="floatright editfield">
+      Order:
+        @Html.Partial("EditTextViewUserControl", new Tartan.Models.EditTextViewModel()
+      {Name="frm_order_" + Model.Title.UrlEncodeSeo(), Value=Model.Order.ToString(), Class="moduleOrder notes editfield"})
+    </div>
+    <div class="floatright ui-state-default ui-corner-all editfield">
+      <span class="saveNow ui-icon ui-icon-disk"></span>
+    </div>
+    <div class="floatright ui-state-default ui-corner-all">
+      <span class="editNow editModule ui-icon ui-icon-pencil"></span>
+    </div>
+  </div>
+  }
+  <div style="clear:both;"></div>
+  @Html.Partial("EditTextViewUserControl", 
+    new Tartan.Models.EditTextViewModel() 
+      {Name="frm_title_" + Model.Title.UrlEncodeSeo(), Value=Model.Title, Class="editTitleTextBox editfield" })
+
+  @{Html.RenderPartial(Model.GetType().Name + "ViewUserControl", Model);}
+</div>
+

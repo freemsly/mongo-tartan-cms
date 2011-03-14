@@ -1,0 +1,5 @@
+﻿@model dynamic
+@if (User.IsEditor())
+{
+<textarea name='@(Model.Title)' class="editContentTextBox @Model.Class" rows="8">@Model.Content</textarea>
+}

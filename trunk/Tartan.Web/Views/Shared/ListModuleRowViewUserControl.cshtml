@@ -1,0 +1,29 @@
+﻿@model System.Collections.Generic.KeyValuePair<string,string>
+@{
+  string overrideKeyDisplayValue = Model.Key;
+  string formValueKey = "frm_list_value_" + ((string)Model.Key).UrlEncodeSeo();
+  bool isNewRow = false;
+    
+  if(User.IsEditor() && ViewData.ContainsKey("IsNew") && Boolean.Equals(ViewData["IsNew"], true))
+  {
+    isNewRow = true;
+    overrideKeyDisplayValue = String.Empty;
+  }
+}
+  <div class="liKey editable">
+    @Model.Key
+  </div>
+    @Html.Partial("EditTextViewUserControl", new Tartan.Models.EditTextViewModel() 
+      { Value = overrideKeyDisplayValue, Name = "frm_list_key_" + ((string)Model.Key).UrlEncodeSeo(), Class = "liKey editfield" })
+  <div class="liValue editable">
+    @Model.Value
+  </div>
+    @Html.Partial("EditTextViewUserControl", new Tartan.Models.EditTextViewModel()
+      { Value = Model.Value, Name = formValueKey, Class = "liValue editfield" })
+@if (User.IsEditor() && !isNewRow)
+{
+  <div class="floatleft">
+  <div class="btn editfield deleteListRow ui-icon ui-icon-close" x-key="@formValueKey"></div>
+  </div>
+}
+
