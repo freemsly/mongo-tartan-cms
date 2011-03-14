@@ -1,0 +1,7 @@
+﻿@model Tartan.Models.EditTextViewModel
+@if (User.IsEditor())
+{
+  <div class='@Model.Class'>
+    <input type="text" value="@Model.Value" name="@Model.Name" />
+  </div>
+}

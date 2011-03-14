@@ -1,0 +1,175 @@
+﻿@model Tartan.Models.PageModel
+
+@{
+    View.Title = Model.Title;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<input type="hidden" name="pageID" id="pageID" value="@Model.ID" class="pageEditField" />
+<div class="pageControls">
+  <h2 class="editable" style="width:80%;">@View.Title</h2>
+  @if (User.IsEditor())
+  {
+  <div class="editPageTitle">
+    <input name="frm_Title" value="@View.Title" class="editfield pageEditField" />
+  </div>
+
+  <div class="pageFields pageControlPanel">
+    <div id="togglePageControls" title="Edit" class="ui-state-default ui-corner-all floatright">
+      <span class="ui-icon ui-icon-pencil pageFields editNow"></span>
+    </div>
+    <div class="ui-state-default ui-corner-all floatright" title="Add New Module">
+      <span class="ui-icon ui-icon-document" id="createNewModule"></span>
+    </div>
+
+    <div class="editfield pageControl">
+      <span>Order: <input id="frm_page_order" name="frm_Order" type="text" value="@Model.Order" class="order pageEditField" /></span>
+
+      <div title="Save" class="ui-state-default ui-corner-all" style="float:right;">
+        <span class="ui-icon ui-icon-disk savePageNow saveNow btn"></span>
+      </div>
+
+    </div>
+  </div>
+  <div style="clear:both;"></div>
+}
+</div>
+
+
+@foreach (var module in Model.Modules)
+{
+<div class="moduleContainer">
+  @Html.Partial("ModuleViewUserControl", module)
+</div>
+<div style="clear:both;"></div>
+}
+
+@if (User.IsEditor())
+{
+<div>
+  <div id="createNewModuleForm">
+    <div>
+    
+    <div class="editMode">
+      <div class="floatleft">
+      Title:
+      </div>
+      @{Html.RenderPartial("EditTextViewUserControl", 
+          new Tartan.Models.EditTextViewModel() {Name="newModuleName", Value="", Class="editfield floatleft"});}
+      <div class="floatright ui-corner-all">
+        <span class="ui-state-default ui-icon ui-icon-disk saveNewModuleFormNow btn"></span>
+      </div> 
+      <div class="clear"></div>
+    Type:
+      <select id="newModuleType" name="newModuleType">
+        <option value='@typeof(Tartan.Models.ContentModule).ToString().Replace(".", "_")'>Content</option>
+        <option value='@typeof(Tartan.Models.ListModule).ToString().Replace(".", "_")'>List</option>
+      </select>
+
+      <div id="edit_Tartan_Models_ContentModule" class="newModuleTypeForm editMode">
+        @{Html.RenderPartial("ContentModuleViewUserControl", new Tartan.Models.ContentModule()
+         { Content="", Order=-1, Title="Content"
+         });}
+      </div>
+
+      <div id="edit_Tartan_Models_ListModule" class="newModuleTypeForm editMode" style="display:none;">
+        @{Html.RenderPartial("ListModuleViewUserControl", new Tartan.Models.ListModule()
+          {
+            ListItems=new Dictionary<string,string>(), Order=-1, Title=""
+          });}
+      </div>
+    </div>
+    </div>
+  </div>
+</div>
+}
+    
+@section JavaScriptIncludes
+{
+@if(User.IsEditor())
+{
+  <script type="text/javascript">
+    $(".ui-icon").mouseover(function () {
+      $(this).parent().addClass("ui-state-highlight");
+    }).mouseout(function () {
+      $(this).parent().removeClass("ui-state-highlight");
+    }).click(function () {
+      $(this).parent().toggleClass("ui-state-active");
+    });
+
+    $("#newModuleType").change(function () {
+      $(".newModuleTypeForm").hide();
+      $("#edit_" + $(this).val()).show();
+    });
+    
+    var pageEditPostbackUrl = '@Model.Title.UrlEncodeSeo()' + '/Edit'; //window.location.pathname;
+
+    $(".autoClear").focus(function () {
+      if ($(this).val() == this.defaultValue) {
+        $(this).val("");
+      }
+    }).blur(function () {
+      if ($(this).val() == "") {
+        $(this).val(this.defaultValue);
+      }
+    });
+
+
+    $("#createNewModule").click(function () {
+      $("#createNewModuleForm").dialog({ width: 515, resizable:false, title:"New Module" });
+    });
+
+    $(".savePageNow").live("click", function () {
+      $.post(pageEditPostbackUrl, $(".pageEditField"),
+        function (result, y, z) {
+          document.body.style.cursor = 'default';
+          window.location = '@Common.ResolveUrl("~")';
+        });
+    });
+
+    $(".editNow").live("click", function () {
+      var module = $(this).closest(".module");
+
+      module.toggleClass("editMode");
+
+      var isEditMode = module.hasClass("editMode");
+
+      var editableItems = module.find(".editable");
+
+      var thisModule = $(this).closest(".module");
+
+      var contentModules = thisModule.find(".content");
+
+      module.find(".saveNow").click(function () {
+        var moduleTitleEscaped = escape(thisModule.find(".moduleTitle").html().replace(" ", "-"));
+
+        document.body.style.cursor = 'wait';
+        var pageIDField = $("#pageID");
+        var inputFields = module.find(":input").add(pageIDField);
+
+        $.post(pageEditPostbackUrl + "/" + moduleTitleEscaped,
+          inputFields,
+          function (result, y, z) {
+            document.body.style.cursor = 'default';
+            window.location.reload(true);
+          });
+      });
+    });
+
+    $(".deleteListRow").live("click", function () {
+      var deleteRowKey = $(this).attr("x-key");
+
+      var itemToDelete = $("[name=" + deleteRowKey + "]");
+
+      var rowToDelete = $(this).closest(".liRow");
+      rowToDelete.slideUp("fast", function () {
+        itemToDelete.val("{delete}");
+      });
+    });
+
+    $("#togglePageControls").click(function () {
+      $(".pageControls").toggleClass("editMode");
+    });
+</script>
+  }
+}

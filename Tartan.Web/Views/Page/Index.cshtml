@@ -1,0 +1,15 @@
+﻿@model List<Tartan.Models.PageModel>
+
+<h2>List of Pages</h2>
+@foreach (var page in Model)
+{
+  <div class="display-label">
+    @Html.ActionLink(page.Title, "Edit", new { controller = "Page" }, new { title = "yabadabadoo" })
+  </div>
+}
+  <p />
+  <div class="display-lablel">
+    @Html.ActionLink("Create", "Create", "Page")
+  </div>
+
+

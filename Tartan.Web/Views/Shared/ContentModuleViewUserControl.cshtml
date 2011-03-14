@@ -1,0 +1,6 @@
+﻿@model Tartan.Models.ContentModule
+
+<div class="moduleContent editable">
+  @Model.Content
+</div>
+@{Html.RenderPartial("EditBoxViewUserControl", new { Title = "frm_content_" + Model.Title.UrlEncodeSeo(), Content = Model.Content, Class = "editfield" });}

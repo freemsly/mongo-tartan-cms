@@ -1,0 +1,67 @@
+﻿@using Tartan.Models
+<!DOCTYPE html>
+<html>
+<head>
+    <title>@View.Title</title>
+    <link href="@Url.Content("~/Content/Site.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/smoothness/jquery-ui-1.8.9.custom.css")" rel="stylesheet" type="text/css" />
+
+<!--    <script src="@Url.Content("~/Scripts/jquery-1.4.1.min.js")" type="text/javascript"></script>-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js" type="text/javascript"></script>
+<!--    <script src="@Url.Content("~/Scripts/jquery.unobtrusive-ajax.min.js")" type="text/javascript"></script>-->
+    <script src="@Url.Content("~/Scripts/jquery.validate.min.js")" type="text/javascript"></script>
+<!--    <script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")" type="text/javascript"></script>-->
+
+
+@if (User.IsEditor())
+{
+  <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.9/jquery-ui.min.js" type="text/javascript"></script>
+  <script src="@Url.Content("~/Scripts/jquery-ui-1.8.9.custom.min.js")" type="text/javascript"></script>
+
+}
+</head>
+
+<body>
+    <div class="page">
+
+        <div id="header">
+            <div id="title">
+                <h1>My MVC Application</h1>
+            </div>
+
+            <div id="logindisplay">
+                @Html.Partial("_LogOnPartial")
+            </div>
+
+            <div id="menucontainer">
+
+            <div id="menuitems">
+              <label class="ui-button ui-widget ui-state-default ui-button-text-only ui-corner-top @Common.GetUIStateCss()">
+                <span class="ui-button-text">
+                  @Html.ActionLink("Home", "Index", "Home")
+                </span>
+              </label>
+
+              @foreach (PageModel page in ViewData["PageList"] as List<PageModel>)
+              {
+              <label class="ui-button ui-widget ui-state-default ui-button-text-only ui-corner-top @page.GetUIStateCss()">
+                <span class="ui-button-text">
+                  @Html.ActionLink(page.Title, "", page.Title.Replace(' ', '-'))
+                  <input type="hidden" name="pageOrder" value="@page.Order" />
+                </span>
+              </label>
+              }
+             </div>
+          </div>
+          <div style="clear:both;"></div>
+        </div>
+
+        <div id="main" class="clearfix ui-corner-all">
+            @RenderBody()
+            <div id="footer">
+            </div>
+        </div>
+    </div>
+@RenderSection("JavaScriptIncludes", required: false)
+</body>
+</html>

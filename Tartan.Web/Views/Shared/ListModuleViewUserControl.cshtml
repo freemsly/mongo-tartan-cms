@@ -1,0 +1,21 @@
+﻿@model Tartan.Models.ListModule
+
+<div class="moduleList">
+@foreach (var listItem in Model.ListItems)
+{
+  <div class="liRow">
+    @Html.Partial("ListModuleRowViewUserControl", listItem)
+  </div>
+}
+</div>
+@if (User.IsEditor())
+{
+  <div id="addNewRowPrototypeForm" style="display:none;">
+    <div style="clear:both;"></div>
+    <div class="addListRowForm editfield">
+      @Html.Partial("ListModuleRowViewUserControl", new KeyValuePair<string, string>("newField", ""), 
+        new ViewDataDictionary() { { "IsNew", true }})
+    </div>
+  </div>
+}
+<div style="clear:both;"></div>

@@ -1,0 +1,8 @@
+﻿@model Tartan.Models.Module
+@if(Model == null)
+{
+  <text>{status:"Fail"}</text>
+}else
+{
+  <text>{status:"Success",title:"@Model.Title"}</text>
+}
